@@ -6,18 +6,21 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="http://yoursite.com">
-  <title>Catalan介绍 | Hexo</title>
+  <title>KMP Manacher | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="卡特兰数卡特兰数定义  Catalan_n &#x3D; \sum_{i&#x3D;1}^{n-1} Catalan_i * Catalan_{n-i}通项公式  Catalan_n &#x3D; \frac{1}{n+1}C_{2n}^{n}或  Catalan_n &#x3D; C_{2n}^{n} - C_{2n}^{n+1}递推关系参考  Catalan_n &#x3D; \frac{4n-2}{n+1}Catalan_{n-1}练习题型">
+  <meta name="description" content="KMP实现：String.getIndexOf()应用了kmp，或者其改进 字符串匹配问题 概念  子序列 ： 子序列正常不连续  子数组&#x2F;字串：连续   暴力法  时间复杂度$O(N*M)$  KMP 概念引入&#x2F;定义  最长前缀和最长后缀  最长前缀不包括字串最后一个  最长后缀不包含字串第一个字符   当前元素存储的信息，寻找之前字串（不包括当前元素）的最长前缀和最长后缀相等 str1 &amp;gt">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Catalan介绍">
-<meta property="og:url" content="http://yoursite.com/2020/07/16/Catalan%E4%BB%8B%E7%BB%8D/index.html">
+<meta property="og:title" content="KMP Manacher">
+<meta property="og:url" content="http://yoursite.com/2020/07/16/KMP-Manacher/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="卡特兰数卡特兰数定义  Catalan_n &#x3D; \sum_{i&#x3D;1}^{n-1} Catalan_i * Catalan_{n-i}通项公式  Catalan_n &#x3D; \frac{1}{n+1}C_{2n}^{n}或  Catalan_n &#x3D; C_{2n}^{n} - C_{2n}^{n+1}递推关系参考  Catalan_n &#x3D; \frac{4n-2}{n+1}Catalan_{n-1}练习题型">
+<meta property="og:description" content="KMP实现：String.getIndexOf()应用了kmp，或者其改进 字符串匹配问题 概念  子序列 ： 子序列正常不连续  子数组&#x2F;字串：连续   暴力法  时间复杂度$O(N*M)$  KMP 概念引入&#x2F;定义  最长前缀和最长后缀  最长前缀不包括字串最后一个  最长后缀不包含字串第一个字符   当前元素存储的信息，寻找之前字串（不包括当前元素）的最长前缀和最长后缀相等 str1 &amp;gt">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2020-07-15T17:01:22.000Z">
-<meta property="article:modified_time" content="2020-07-16T04:34:20.235Z">
+<meta property="article:published_time" content="2020-07-16T10:48:23.000Z">
+<meta property="article:modified_time" content="2020-07-16T11:09:49.130Z">
 <meta property="article:author" content="Howe">
+<meta property="article:tag" content="algorithm">
+<meta property="article:tag" content="KMP">
+<meta property="article:tag" content="Manacher">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternative" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -154,54 +157,128 @@
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-Catalan介绍" class="article article-type-post " itemscope itemprop="blogPost">
+            <article id="post-KMP-Manacher" class="article article-type-post " itemscope itemprop="blogPost">
   <div class="article-inner">
     
       <header class="article-header">
         
   
     <h1 class="article-title" itemprop="name">
-      Catalan介绍
+      KMP Manacher
     </h1>
   
 
         
-        <a href="/2020/07/16/Catalan%E4%BB%8B%E7%BB%8D/" class="archive-article-date">
-  	<time datetime="2020-07-15T17:01:22.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
+        <a href="/2020/07/16/KMP-Manacher/" class="archive-article-date">
+  	<time datetime="2020-07-16T10:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
 </a>
         
       </header>
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h1 id="卡特兰数"><a href="#卡特兰数" class="headerlink" title="卡特兰数"></a>卡特兰数</h1><p>卡特兰数定义</p>
-<script type="math/tex; mode=display">
-Catalan_n = \sum_{i=1}^{n-1} Catalan_i * Catalan_{n-i}</script><p>通项公式</p>
-<script type="math/tex; mode=display">
-Catalan_n = \frac{1}{n+1}C_{2n}^{n}</script><p>或</p>
-<script type="math/tex; mode=display">
-Catalan_n = C_{2n}^{n} - C_{2n}^{n+1}</script><p>递推关系<a href="https://blog.csdn.net/pallypally/article/details/8102557" target="_blank" rel="noopener">参考</a></p>
-<script type="math/tex; mode=display">
-Catalan_n = \frac{4n-2}{n+1}Catalan_{n-1}</script><h2 id="练习题型"><a href="#练习题型" class="headerlink" title="练习题型"></a>练习题型</h2><p><a href="https://blog.csdn.net/astpu84200/article/details/101642136?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase" target="_blank" rel="noopener">参考</a></p>
-<p><a href="https://blog.csdn.net/weixin_40688217/article/details/94750175" target="_blank" rel="noopener">参考</a></p>
-<p><a href="https://www.cnblogs.com/zyt1253679098/p/9190217.html" target="_blank" rel="noopener">参考</a></p>
-<p><a href="https://blog.csdn.net/hemeinvyiqiluoben/article/details/11320419" target="_blank" rel="noopener">证明</a></p>
-<p>\1. 出栈次序</p>
-<p>\2. 01序列</p>
-<p>\3. ‘+1’ ‘-1’序列</p>
-<p>\4. 括号序列</p>
-<p>\5. 找零问题</p>
-<p>\6. 矩阵链乘</p>
-<p>\7. 二叉树计数</p>
-<p>\8. 凸多边形划分</p>
-<p>\9. 圆上n条线段</p>
-<p>\10. 单调路径</p>
-<p>\11. 填充阶梯图形</p>
-<p>\12. 摞碗问题</p>
-<p>\13. 汽车胡同加油问题</p>
-<p>\14. 还书借书问题</p>
-<p>\15. 高矮排队问题</p>
-<h4 id="96-不同的二叉搜索树"><a href="#96-不同的二叉搜索树" class="headerlink" title="96. 不同的二叉搜索树"></a><a href="https://leetcode-cn.com/problems/unique-binary-search-trees/" target="_blank" rel="noopener">96. 不同的二叉搜索树</a></h4>
+        <h2 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h2><p>实现：String.getIndexOf()应用了kmp，或者其改进</p>
+<p>字符串匹配问题</p>
+<p><strong>概念</strong></p>
+<ul>
+<li><p>子序列 ： 子序列正常不连续</p>
+</li>
+<li><p>子数组/字串：连续</p>
+</li>
+</ul>
+<p><strong>暴力法</strong></p>
+<ul>
+<li>时间复杂度$O(N*M)$</li>
+</ul>
+<p><strong>KMP</strong></p>
+<p>概念引入/定义</p>
+<ul>
+<li><p>最长前缀和最长后缀</p>
+</li>
+<li><p>最长前缀不包括字串最后一个</p>
+</li>
+<li><p>最长后缀不包含字串第一个字符</p>
+</li>
+</ul>
+<p>当前元素存储的信息，寻找之前字串（不包括当前元素）的最长前缀和最长后缀相等</p>
+<p>str1 &gt; str2</p>
+<p>next_arr[]：信息数组，和str2长度相同</p>
+<ul>
+<li>0位置，之前没有字符串，认为规定-1</li>
+<li>1位置，之前字符串长度为1，最长前缀、最长后缀不包括最后一个和第一个，所以人为规定0</li>
+<li>依次填好之后位置，有一种快速计算的 方法，之后介绍</li>
+</ul>
+<p><strong>KMP实质</strong></p>
+<p>没有否定str1从j位置开始配出str2的可能性，但是省略掉从str1的j到x（即str2的0~z）的配对过程，因为已经根据最长前缀和最长后缀得到了。</p>
+<p>j位置之后的并没丢失，</p>
+<p>省略了从i到j中间位置都配不出str2，从而加速。正确性很好证明</p>
+<p>一直推到最长前缀和最长后缀为0了，说明没有匹配的了str1的i到x，从x+1位置匹配str2的0位置</p>
+<p><strong>题目</strong></p>
+<ol>
+<li><p>给定字符串s，求解含有两个s的最短字符串。例如”ababa”含有两个”aba”</p>
+<p>解题思路：<br>利用kmp求解字符串的最后一个字符的下一个字符的next[]<br>处理成最大前缀和最大后缀能重复多少，向尾部添加从最大相同前缀后开始到结尾的子串</p>
+</li>
+<li><p>二叉树的子结构</p>
+<p>解题思路</p>
+<p>将A、B两树唯一序列化，达到能唯一重建的目的</p>
+<p>在A中查找是否存在B的字串</p>
+</li>
+<li><p>判断某个字符串是否由一个子字符串重复组成</p>
+</li>
+</ol>
+<h2 id="Manacher"><a href="#Manacher" class="headerlink" title="Manacher"></a>Manacher</h2><p>马拉车</p>
+<p>最长回文子串 </p>
+<p><strong>暴力解</strong></p>
+<p>数组的每个位置开始左右扩展，最后取出最大值</p>
+<p>奇数和偶数回文串直接处理需要分开处理奇偶</p>
+<p>技巧：在数开头、中间、结尾加入特殊字符（虚数）,都变为奇数了，结果为求得得最大值/2</p>
+<ul>
+<li><p>1 1 -&gt; #1#1        </p>
+</li>
+<li><p>111 -&gt; #1#1#1#</p>
+</li>
+</ul>
+<p>特殊字符可以是任意字符，因为避过过程中，实数和实数比对，虚数和虚数比对，所以特殊字符是什么不影响结果。</p>
+<p>时间复杂度$O(n^2)$</p>
+<p><strong>Manacher</strong> </p>
+<p>概念建立 </p>
+<p>回文直径/回文半径</p>
+<ol>
+<li>回文半径数组</li>
+<li>回文右边界数组</li>
+<li>第一次到达回文右边界的中心</li>
+</ol>
+<p><strong>状态分析</strong></p>
+<ul>
+<li><p>i不在回文右边界里面：可能性1-&gt;暴力左右扩展</p>
+</li>
+<li><p>i在回文右边界内</p>
+<p>​        L(—————i’——————C——————i—————)R</p>
+<ul>
+<li><p>可能性2</p>
+<p>L(—————i’——————C——————i—————)R</p>
+<p>L(——$L_i$——i’——$R_i$—-C——————i—————)R</p>
+<p>[L,R]包住了  $i’$的回文半径[Li,Ri]   </p>
+<p>i的回文半径  = i’的回文半径</p>
+</li>
+<li><p>可能性3</p>
+<p>—————-L(—-i’——————C——————i—-)R—————</p>
+<p>——$L_i$—*L(—-i’———-$R_i$-C——————i—-)R&amp;—————</p>
+<p>[L,R]没有包住  $i’$的回文半径[Li,Ri]   </p>
+<p>i的回文半径  = [i,R]*2</p>
+</li>
+<li><p>可能性4</p>
+<p>—————-L(—-i’——————C——————i—-)R—————</p>
+<p>—————$L_i$—-i’—-$R_i$———C——————i—-)R—————</p>
+<p>[L,R]没有包住  $i’$的回文半径[Li,Ri] 出现 重叠，</p>
+<p>i的回文半径 $\geq$ i‘的回文半径,需要比对，但是i到R是不需要计算的，因为由之前的i’可以得到</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>题目</strong></p>
+<p>给定一个字符串str1，只能往str1的后面添加字符变成str2,要求str2整体都是回文串且最短</p>
+
       
 
       
@@ -230,6 +307,25 @@ Catalan_n = \frac{4n-2}{n+1}Catalan_{n-1}</script><h2 id="练习题型"><a href=
     <div class="article-info article-info-index">
       
       
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">algorithm</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">KMP</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Manacher</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
       
 
       
@@ -280,7 +376,7 @@ Catalan_n = \frac{4n-2}{n+1}Catalan_{n-1}</script><h2 id="练习题型"><a href=
     <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
     <p>扫一扫，分享到微信</p>
     <div class="wx-qrcode">
-      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/16/Catalan%E4%BB%8B%E7%BB%8D/" alt="微信分享二维码">
+      <img src="//pan.baidu.com/share/qrcode?url=http://yoursite.com/2020/07/16/KMP-Manacher/" alt="微信分享二维码">
     </div>
 </div>
 
@@ -294,15 +390,11 @@ Catalan_n = \frac{4n-2}{n+1}Catalan_{n-1}</script><h2 id="练习题型"><a href=
   
 <nav id="article-nav">
   
-    <a href="/2020/07/16/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          Hello World
-        
-      </div>
-    </a>
   
+    <a href="/2020/07/16/hello-world/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Hello World</div>
+      <i class="icon-circle-right"></i>
+    </a>
   
 </nav>
 

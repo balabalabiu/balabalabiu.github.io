@@ -152,6 +152,259 @@
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-KMP-Manacher" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/16/KMP-Manacher/">KMP Manacher</a>
+    </h1>
+  
+
+        
+        <a href="/2020/07/16/KMP-Manacher/" class="archive-article-date">
+  	<time datetime="2020-07-16T10:48:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="KMP"><a href="#KMP" class="headerlink" title="KMP"></a>KMP</h2><p>实现：String.getIndexOf()应用了kmp，或者其改进</p>
+<p>字符串匹配问题</p>
+<p><strong>概念</strong></p>
+<ul>
+<li><p>子序列 ： 子序列正常不连续</p>
+</li>
+<li><p>子数组/字串：连续</p>
+</li>
+</ul>
+<p><strong>暴力法</strong></p>
+<ul>
+<li>时间复杂度$O(N*M)$</li>
+</ul>
+<p><strong>KMP</strong></p>
+<p>概念引入/定义</p>
+<ul>
+<li><p>最长前缀和最长后缀</p>
+</li>
+<li><p>最长前缀不包括字串最后一个</p>
+</li>
+<li><p>最长后缀不包含字串第一个字符</p>
+</li>
+</ul>
+<p>当前元素存储的信息，寻找之前字串（不包括当前元素）的最长前缀和最长后缀相等</p>
+<p>str1 &gt; str2</p>
+<p>next_arr[]：信息数组，和str2长度相同</p>
+<ul>
+<li>0位置，之前没有字符串，认为规定-1</li>
+<li>1位置，之前字符串长度为1，最长前缀、最长后缀不包括最后一个和第一个，所以人为规定0</li>
+<li>依次填好之后位置，有一种快速计算的 方法，之后介绍</li>
+</ul>
+<p><strong>KMP实质</strong></p>
+<p>没有否定str1从j位置开始配出str2的可能性，但是省略掉从str1的j到x（即str2的0~z）的配对过程，因为已经根据最长前缀和最长后缀得到了。</p>
+<p>j位置之后的并没丢失，</p>
+<p>省略了从i到j中间位置都配不出str2，从而加速。正确性很好证明</p>
+<p>一直推到最长前缀和最长后缀为0了，说明没有匹配的了str1的i到x，从x+1位置匹配str2的0位置</p>
+<p><strong>题目</strong></p>
+<ol>
+<li><p>给定字符串s，求解含有两个s的最短字符串。例如”ababa”含有两个”aba”</p>
+<p>解题思路：<br>利用kmp求解字符串的最后一个字符的下一个字符的next[]<br>处理成最大前缀和最大后缀能重复多少，向尾部添加从最大相同前缀后开始到结尾的子串</p>
+</li>
+<li><p>二叉树的子结构</p>
+<p>解题思路</p>
+<p>将A、B两树唯一序列化，达到能唯一重建的目的</p>
+<p>在A中查找是否存在B的字串</p>
+</li>
+<li><p>判断某个字符串是否由一个子字符串重复组成</p>
+</li>
+</ol>
+<h2 id="Manacher"><a href="#Manacher" class="headerlink" title="Manacher"></a>Manacher</h2><p>马拉车</p>
+<p>最长回文子串 </p>
+<p><strong>暴力解</strong></p>
+<p>数组的每个位置开始左右扩展，最后取出最大值</p>
+<p>奇数和偶数回文串直接处理需要分开处理奇偶</p>
+<p>技巧：在数开头、中间、结尾加入特殊字符（虚数）,都变为奇数了，结果为求得得最大值/2</p>
+<ul>
+<li><p>1 1 -&gt; #1#1        </p>
+</li>
+<li><p>111 -&gt; #1#1#1#</p>
+</li>
+</ul>
+<p>特殊字符可以是任意字符，因为避过过程中，实数和实数比对，虚数和虚数比对，所以特殊字符是什么不影响结果。</p>
+<p>时间复杂度$O(n^2)$</p>
+<p><strong>Manacher</strong> </p>
+<p>概念建立 </p>
+<p>回文直径/回文半径</p>
+<ol>
+<li>回文半径数组</li>
+<li>回文右边界数组</li>
+<li>第一次到达回文右边界的中心</li>
+</ol>
+<p><strong>状态分析</strong></p>
+<ul>
+<li><p>i不在回文右边界里面：可能性1-&gt;暴力左右扩展</p>
+</li>
+<li><p>i在回文右边界内</p>
+<p>​        L(—————i’——————C——————i—————)R</p>
+<ul>
+<li><p>可能性2</p>
+<p>L(—————i’——————C——————i—————)R</p>
+<p>L(——$L_i$——i’——$R_i$—-C——————i—————)R</p>
+<p>[L,R]包住了  $i’$的回文半径[Li,Ri]   </p>
+<p>i的回文半径  = i’的回文半径</p>
+</li>
+<li><p>可能性3</p>
+<p>—————-L(—-i’——————C——————i—-)R—————</p>
+<p>——$L_i$—*L(—-i’———-$R_i$-C——————i—-)R&amp;—————</p>
+<p>[L,R]没有包住  $i’$的回文半径[Li,Ri]   </p>
+<p>i的回文半径  = [i,R]*2</p>
+</li>
+<li><p>可能性4</p>
+<p>—————-L(—-i’——————C——————i—-)R—————</p>
+<p>—————$L_i$—-i’—-$R_i$———C——————i—-)R—————</p>
+<p>[L,R]没有包住  $i’$的回文半径[Li,Ri] 出现 重叠，</p>
+<p>i的回文半径 $\geq$ i‘的回文半径,需要比对，但是i到R是不需要计算的，因为由之前的i’可以得到</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>题目</strong></p>
+<p>给定一个字符串str1，只能往str1的后面添加字符变成str2,要求str2整体都是回文串且最短</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color5">algorithm</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">KMP</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">Manacher</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/16/KMP-Manacher/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
+    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/07/16/hello-world/">Hello World</a>
+    </h1>
+  
+
+        
+        <a href="/2020/07/16/hello-world/" class="archive-article-date">
+  	<time datetime="2020-07-16T04:34:20.236Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-16</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+      
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2020/07/16/hello-world/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+<aside class="wrap-side-operation">
+    <div class="mod-side-operation">
+        
+        <div class="jump-container" id="js-jump-container" style="display:none;">
+            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
+                <i class="icon-font icon-back"></i>
+            </a>
+            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
+                <i class="icon-font icon-plane jump-plane"></i>
+            </div>
+        </div>
+        
+        
+    </div>
+</aside>
+
+
+
+
+  
     <article id="post-Catalan介绍" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -212,77 +465,6 @@ Catalan_n = \frac{4n-2}{n+1}Catalan_{n-1}</script><h2 id="练习题型"><a href=
       
         <p class="article-more-link">
           <a class="article-more-a" href="/2020/07/16/Catalan%E4%BB%8B%E7%BB%8D/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-<aside class="wrap-side-operation">
-    <div class="mod-side-operation">
-        
-        <div class="jump-container" id="js-jump-container" style="display:none;">
-            <a href="javascript:void(0)" class="mod-side-operation__jump-to-top">
-                <i class="icon-font icon-back"></i>
-            </a>
-            <div id="js-jump-plan-container" class="jump-plan-container" style="top: -11px;">
-                <i class="icon-font icon-plane jump-plane"></i>
-            </div>
-        </div>
-        
-        
-    </div>
-</aside>
-
-
-
-
-  
-    <article id="post-hello-world" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2020/07/12/hello-world/">Hello World</a>
-    </h1>
-  
-
-        
-        <a href="/2020/07/12/hello-world/" class="archive-article-date">
-  	<time datetime="2020-07-12T10:52:24.382Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2020-07-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-      
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2020/07/12/hello-world/">展开全文 >></a>
         </p>
       
 
@@ -424,6 +606,18 @@ MathJax.Hub.Queue(function() {
             <input type="checkbox" q-on="click:toggleTag(e)" q-attr="checked:showTags">
           </label>
           <ul class="article-tag-list" q-show="showTags">
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color5">algorithm</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">KMP</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">Manacher</a>
+              </li>
             
             <div class="clearfix"></div>
           </ul>
